@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>员工</title>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+</head>
+<body>
+
+<h2>添加员工</h2>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>id：</label>
+<input type="text" id="userId">
+<br>
+<br>
+<label>员工账号：</label>
+<input type="text" id="userAccount">
+<br>
+<br>
+<label>员工密码：</label>
+<input type="text" id="userPass">
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>类别：</label>
+<input type="text" id="role">
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>头像：</label>
+<input type="text" id="faceimg">
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="submit" onclick="submitWaiter()">
+</body>
+<script type="text/javascript">
+    function submitWaiter() {
+		var userId=$('#userId').val();
+		var userAccount=$('#userAccount').val();
+		var userPass=$('#userPass').val();
+		var role=$('#role').val();
+		var faceimg=$('#faceimg').val();
+		
+	    $.ajax({
+	          url:"AddWaiter",
+	          type:"post",
+	          data:{
+	         	 'userId':userId,
+	              'userAccount':userAccount,
+	              'userPass':userPass,
+	              'role':role,
+	              'faceimg':faceimg
+	                       
+	          },
+	          success:function(res){
+	      
+	         if(res=="success"){
+	        	 alert("添加成功！");
+	         }else{
+	        	 alert("添加失败！请检查！！");
+	         }
+	        
+	          },
+	          error:function(res){
+	        	  alert("添加失败！该员工已存在");
+	          }
+	      })
+	}
+</script>
+</html>

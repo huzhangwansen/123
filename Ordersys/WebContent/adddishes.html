@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>增添菜品</title>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+</head>
+<body>
+
+<h2>添加菜品</h2>
+<label>菜品名称：</label>
+<input type="text" id="dishesId">
+<br>
+<br>
+<label>菜品名称：</label>
+<input type="text" id="dishesName">
+<br>
+<br>
+<label>菜品描述：</label>
+<input type="text" id="dishesDiscript">
+<br>
+<br>
+<label>菜品图片：</label>
+<input type="text" id="dishesImg">
+<br>
+<br>
+<label>菜品备注：</label>
+<input type="text" id="dishesTxt">
+<br>
+<br>
+<label>recommend：</label>
+<input type="text" id="recommend">
+<br>
+<br>
+<label>菜品价格：</label>
+<input type="text" id="dishesPrice">
+<br>
+<br>
+
+<input type="submit" id="submit" onclick="submitDishes()" >
+
+</body>
+<script type="text/javascript">
+    function submitDishes() {
+		var dishesId=$('#dishesId').val();
+		var dishesName=$('#dishesName').val();
+		var dishesDiscript=$('#dishesDiscript').val();
+		var dishesImg=$('#dishesImg').val();
+		var dishesTxt=$('#dishesTxt').val();
+		var recommend=$('#recommend').val();
+		var dishesPrice=$('#dishesPrice').val();
+		
+	    $.ajax({
+	          url:"Adddishes",
+	          type:"post",
+	          data:{
+	         	 'dishesId':dishesId,
+	              'dishesName':dishesName,
+	              'dishesDiscript':dishesDiscript,
+	              'dishesImg':dishesImg,
+	              'dishesTxt':dishesTxt,
+	              'recommend':recommend,
+	              'dishesPrice':dishesPrice
+	                       
+	          },
+	          success:function(res){
+	         if(res=="success"){
+	        	 alert("添加成功！");
+	         }else{
+	        	 alert("添加失败！请检查！！");
+	         }
+	        
+	          },
+	          error:function(res){
+	        	  alert("添加失败！该菜品已存在");
+	          }
+	      })
+	}
+</script>
+</html>

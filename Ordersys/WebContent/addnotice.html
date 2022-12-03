@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>公告</title>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+</head>
+<body>
+
+<h2>公告</h2>
+
+<label>公告发布：</label>
+<input type="text" id="notice">
+<br>
+<br>
+<input type="submit" id="submit" onclick="submitNotice()">
+</body>
+<script type="text/javascript">
+    function submitNotice() {
+
+		var notice=$('#notice').val();
+		
+	    $.ajax({
+	          url:"AddNotice",
+	          type:"post",
+	          data:{
+
+	              'notice':notice
+	                       
+	          },
+	          success:function(res){
+	      
+	         if(res=="success"){
+	        	 alert("添加成功！");
+	         }else{
+	        	 alert("添加失败！请检查！！");
+	         }
+	        
+	          },
+	          error:function(res){
+	        	  alert("添加失败！该公告已存在");
+	          }
+	      })
+	}
+</script>
+</html>

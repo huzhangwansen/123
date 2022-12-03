@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>列表</title>
+  <link rel="stylesheet" href=".//layui/css/layui.css" media="all">
+</head>
+<body>
+<center>
+    <table id="demo" lay-filter="test"></table>
+</center>
+
+ 
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+<script src=".//layui/layui.js"></script>
+<script>
+ layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#demo'
+    ,height:'full-10'
+    ,url:'SelectAllMon'//数据接口
+    ,method:'get'
+    ,page: true //开启分页
+    ,cols: [[ //表头
+       {field: 'orderId', title: '订单id', width:100, sort: true}
+      ,{field: 'tableId', title: '桌号', width:100}
+      ,{field: 'dishesName', title: '菜品名', width:120}
+      ,{field: 'orderBeginDate', title: '点单时间', width:120} 
+      ,{field: 'orderEndDate', title: '结账时间', width: 140}
+
+    ]]
+  });
+  
+   //监听行事件
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del();
+        console.log(data);
+        $.ajax({
+			type : "post",
+			url : "RemoveMon?orderId=" + data.orderId,
+			dataType : "json"
+		});
+        layer.close(index);
+      });
+    } else if(obj.event === 'edit'){
+    	
+         //实现编辑的功能
+        
+          layer.open({
+        	 type:2//自定义弹出，layui框架弹出为1
+             ,title:'编辑菜品信息'
+             ,content:'EditMon.html'
+             ,maxmin:true//最大化
+             ,area:['500px','450px']
+             ,btn:['确定','取消']//按钮
+             ,yes:function(index,layero){
+            	 //回调的数值
+            	
+            	var orderId=$(layero).find('iframe')[0].contentWindow.document.getElementById('orderId').value;
+            	var tableId=$(layero).find('iframe')[0].contentWindow.document.getElementById('tableId').value;
+            	var dishesName=$(layero).find('iframe')[0].contentWindow.document.getElementById('dishesName').value;
+            	var orderBeginDate=$(layero).find('iframe')[0].contentWindow.document.getElementById('orderBeginDate').value;
+            	var orderEndDate=$(layero).find('iframe')[0].contentWindow.document.getElementById('orderEndDate').value;
+            	var waiterId=$(layero).find('iframe')[0].contentWindow.document.getElementById('waiterId').value;
+            	
+            	//同步数据表格中的数据
+            	obj.update({
+            		'orderId':orderId,
+					'tableId':tableId,
+					'dishesName':dishesName,
+					'orderBeginDate':orderBeginDate,
+					'orderEndDate':orderEndDate,
+            		'waiterId':waiterId
+            	})
+            	
+            	$.ajax({
+            		url:'EditMon?orderId='+orderId+ "&tableId="+tableId+ "&dishesName="+dishesName+ "&orderBeginDate="+orderBeginDate+ "&orderEndDate=" +orderEndDate+ "&waiterId="+waiterId,
+            		type:'post',
+            		contentType:'application/json;charset=utf-8',
+            		dataType:'text',
+            		data:{
+            			'orderId':orderId,
+    					'tableId':tableId,
+    					'dishesName':dishesName,
+    					'orderBeginDate':orderBeginDate,
+    					'orderEndDate':orderEndDate,
+                		'waiterId':waiterId
+            		},
+            		success:function(res){
+            			layer.msg('编辑成功！');
+            		},
+            		error:function(res){
+            			layer.msg('编辑失败！！');
+            		}
+            	})
+            	
+            	layer.close(index);
+            		}
+         ,success:function(layero,index){ 
+        	 var div=layero.find('iframe').contents().find('#useradmin');
+        	 var body=layer.getChildFrame('body',index);
+        	 var iframeWindow=window['layui-layer-iframe'+index]
+        	 body.find('#orderId').val(data.orderId);
+        	 body.find('#tableId').val(data.tableId);
+        	 body.find('#dishesName').val(data.dishesName);
+        	 body.find('#orderBeginDate').val(data.orderBeginDate);
+        	 body.find('#orderEndDate').val(data.orderEndDate);
+        	 body.find('#waiterId').val(data.waiterId);
+           }
+         });  
+      }  
+  });
+  
+}); 
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>列表</title>
+  <link rel="stylesheet" href=".//layui/css/layui.css" media="all">
+</head>
+<body>
+<center>
+    <table id="demo" lay-filter="test"></table>
+</center>
+
+ 
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/html" id="barDemo" >
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script src=".//layui/layui.js"></script>
+<script>
+ layui.use('table', function(){
+  var table = layui.table;
+  
+  //实例
+  table.render({
+    elem: '#demo'//抽象
+    ,height:'full-10'
+    ,url: 'SelectAllWaiter' //数据接口
+    ,method:'get'
+    ,page: true //开启分页
+    ,cols: [[ //表头
+       {field: 'userId', title: '用户id', width:100, sort: true}
+      ,{field: 'userAccount', title: '用户名', width:100}
+      ,{field: 'userPass', title: '用户密码', width:120}
+      ,{field: 'role', title: '类别', width:120} 
+      ,{field: 'locked', title: 'locked', width: 140}
+      ,{field: 'faceimg', title: '头像', width: 120}
+      ,{field: 'right', title: '操作', width:150,toolbar:'#barDemo'}
+    ]]
+  });
+  
+   //监听行事件
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del();
+        console.log(data);
+        $.ajax({
+			type : "post",
+			url : "RemoveWaiter?userId=" + data.userId,
+			dataType : "json"
+		});
+        layer.close(index);
+      });
+    } else if(obj.event === 'edit'){
+         //实现编辑
+          layer.open({
+        	 type:2//自定义弹出
+             ,title:'编辑员工信息'
+             ,content:'EditWaiter.html'
+             ,maxmin:true//最大化
+             ,area:['500px','450px']
+             ,btn:['确定','取消']//按钮
+             ,yes:function(index,layero){
+            	 //回调的数值
+            	
+            	var userId=$(layero).find('iframe')[0].contentWindow.document.getElementById('userId').value;
+            	var userAccount=$(layero).find('iframe')[0].contentWindow.document.getElementById('userAccount').value;
+            	var userPass=$(layero).find('iframe')[0].contentWindow.document.getElementById('userPass').value;
+            	var role=$(layero).find('iframe')[0].contentWindow.document.getElementById('role').value;
+            	var locked=$(layero).find('iframe')[0].contentWindow.document.getElementById('locked').value;
+            	var faceimg=$(layero).find('iframe')[0].contentWindow.document.getElementById('faceimg').value;
+            	
+            	//同步数据表格中的数据
+            	obj.update({
+            		'userId':userId,
+            		'userAccount':userAccount,
+            		'userPass':userPass,
+            		'role':role,
+            		'locked':locked,
+            		'faceimg':faceimg
+
+            	})
+            	
+            	$.ajax({
+            		url:'EditWaiter?userId='+userId+ "&userAccount="+userAccount+ "&userPass="+userPass+ "&role="+role+ "&locked=" +locked+ "&faceimg="+faceimg,
+            		type:'post',
+            		contentType:'application/json;charset=utf-8',
+            		dataType:'text',
+            		data:{
+            			'userId':userId,
+                		'userAccount':userAccount,
+                		'userPass':userPass,
+                		'role':role,
+                		'locked':locked,
+                		'faceimg':faceimg
+            		},
+            		success:function(res){
+            			layer.msg('编辑成功！');
+            		},
+            		error:function(res){
+            			layer.msg('编辑失败！！');
+            		}
+            	})
+            	
+            	layer.close(index);
+            		}
+         ,success:function(layero,index){ 
+        	 var div=layero.find('iframe').contents().find('#useradmin');
+        	 var body=layer.getChildFrame('body',index);
+        	 var iframeWindow=window['layui-layer-iframe'+index]
+        	 body.find('#userId').val(data.userId);
+        	 body.find('#userAccount').val(data.userAccount);
+        	 body.find('#userPass').val(data.userPass);
+        	 body.find('#role').val(data.role);
+        	 body.find('#locked').val(data.locked);
+        	 body.find('#faceimg').val(data.faceimg);
+           }
+         });  
+      }  
+  });
+  
+}); 
+</script>
+</body>
+</html>

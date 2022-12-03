@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href=".//layui/css/layui.css" >
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<title>买单</title>
+<link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+<body>
+<center>
+  <table id="demo" lay-filter="test"></table>
+</center>
+
+   
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">买单</a>
+</script> 
+
+<script src=".//layui/layui.js"></script>
+
+<script>
+layui.use('table', function(){
+	  var table = layui.table;
+	  table.render({
+		    elem: '#demo'
+		    ,height: 'full-110'
+		    ,method:'post'
+		    ,url: 'SelectAllGoods' //数据接口
+		    ,page: true //开启分页
+		    ,cols: [[ //表头
+			       {type:'checkbox'}
+				   ,{field: 'orderId', title: '点单id', width:400, sort: true}
+				   ,{field: 'tableId', title: '桌号', width:400, edit: 'text'}
+			       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:250,edit: 'text'}  
+				  ]]
+			  });
+  
+  //监听行事件
+  table.on('tool(test)', function(obj){
+	    var data = obj.data;
+	    
+	    //console.log(obj)
+	    if(obj.event === 'del'){
+	      layer.confirm('真的删除行么', function(index){
+	        obj.del();
+	        console.log(data.studentId);
+	        $.ajax({
+				type : "post",
+				url : "RemoveGoods?orderId=" + data.orderId,
+				dataType : "json"
+			});
+	        layer.close(index);
+	      });
+	    } 
+
+  });
+  
+/*   //监听单元格编辑
+  table.on('edit(test)', function(obj){
+    var value = obj.value //得到修改后的值
+    ,data = obj.data //得到所在行所有键值
+    ,field = obj.field; //得到字段
+    layer.msg('[ID: '+ data.dishesId +'] ' + field + ' 字段更改为：'+ value);
+    $.ajax({
+          url:"EditDishes?dishesId=" +data.dishesId+"&dishesName="+data.dishesName+"&dishesDiscript="+data.dishesDiscript+"&dishesImg="+data.dishesImg+"&dishesTxt="+data.dishesTxt+"&recommend="+data.recommend+"&dishesPrice="+data.dishesPrice,
+          type:"post",
+          contentType:"application/json;charset=utf-8",
+          dataType:'text',
+          data:{
+         	 'dishesId':data.dishesId,
+              'dishesName':data.dishesName,
+              'dishesDiscript':data.dishesDiscript,
+              'dishesImg':data.dishesImg,
+              'dishesTxt':data.dishesTxt,
+               'recommend':data.recommend,
+               'dishesPrice':data.dishesPrice    
+          },
+          success:function(res){
+              layer.msg('操作成功');
+          },
+          error:function(res){
+            layer.msg('操作失败，稍后再试！');
+          }
+      })
+    
+  }); */
+ 
+
+  
+});
+</script>
+
+
+</body>
+</html>
